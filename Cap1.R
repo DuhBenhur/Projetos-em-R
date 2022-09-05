@@ -95,3 +95,44 @@ ss
 
 length(ss)
 ss
+
+
+#Matrizes
+
+#Criando matriz partindo de um vetor
+
+num_matriz <- seq(5,100,5)
+num_matriz
+
+#A função dim() pode transformar um vetor em uma matriz bidimensional
+
+dim(num_matriz) <- c(2,10)
+
+num_matriz
+
+num_matriz_2 <- matrix(seq(5,100,5), nrow = 2)
+num_matriz_2
+
+num_matriz_2[1,6]
+
+#Listas
+# Em R, uma lista é uma coleção de objetos que não são necessariamente
+#do mesmo tipo.
+
+beatles
+ages <- c(17,15,14,22)
+
+#Combinando informações na lista list()
+
+b_info <- list(names=beatles, age_joined = ages)
+
+b_info
+
+#Selecionando elemento dentro da lista
+
+b_info$names
+b_info$age_joined
+b_info$names[3]
+
+b_info$names[b_info$age_joined <= 14]
+
