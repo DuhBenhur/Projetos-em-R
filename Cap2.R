@@ -1,4 +1,4 @@
-library("datasets")
+library(datasets)
 
 library(MASS)
 
@@ -35,6 +35,8 @@ August.Ozone <- subset(airquality, Month == 8,
                        select = c(Month, Day, Ozone))
 
 
+
+
 #Estrutura básica de uma fórmula no R
 
 #function(dependent_var ~ independent_var, data = data.frame)
@@ -64,3 +66,14 @@ s$coefficients[2,1]
 #Explorando o tidyverse
 
 library("tidyverse")
+
+#um dos pacotes components do tidyverse é o tidyr
+#Uma de suas funções extremamente úteis é a chamada de drop_na()
+
+aq.no.missing <- drop_na(airquality)
+
+head(aq.no.missing)
+
+#Função filter 
+filter(aq.no.missing, Day == 1)
+
