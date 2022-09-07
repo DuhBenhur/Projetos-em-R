@@ -120,3 +120,20 @@ legend("topleft", rownames(t(females)), cex = 0.8, fill=nome.cores,
 #terceiro especifica o tamanho do caracteres (80% do tamanho normal)
 # o quarto fornece as cores para amostra de cores
 # ultimo, titulo
+
+#Projeto Rápido Sugerido 3.1
+
+#Alterar a cor das legendas para refletir as cores reais
+
+#obter todas cores do R
+colors()
+
+#função de pesquisa grep para buscar as cores que tenham o argumento no nome (nesse caso brown)
+colors()[grep("brown",colors())]
+
+novas_cores <- c("brown4","dodgerblue1","sandybrown","limegreen")
+
+barplot(t(females), beside=T, ylim = c(0,70), xlab = "Hair Color",
+        ylab = "Frequency of Eye Color", col=novas_cores, axis.lty = "solid")
+
+
