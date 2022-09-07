@@ -137,3 +137,14 @@ barplot(t(females), beside=T, ylim = c(0,70), xlab = "Hair Color",
         ylab = "Frequency of Eye Color", col=novas_cores, axis.lty = "solid")
 
 
+#Projeto Rápido Sugerido 3.2
+
+tipo_origem <- subset(carros,
+                      select = c("Type", "Origin"))
+
+cores_carros <- c("blue","grey70")
+
+barplot(t(table(tipo_origem)), beside=T, ylim = c(0,15), xlab = "Type",
+        ylab = "Frequency", col=cores_carros, axis.lty = "solid")
+legend("topright", rownames(t(table(tipo_origem))), cex = 0.8, fill=cores_carros,
+       title = "Origem")
