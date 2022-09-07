@@ -148,3 +148,51 @@ barplot(t(table(tipo_origem)), beside=T, ylim = c(0,15), xlab = "Type",
         ylab = "Frequency", col=cores_carros, axis.lty = "solid")
 legend("topright", rownames(t(table(tipo_origem))), cex = 0.8, fill=cores_carros,
        title = "Origem")
+
+#Graficos de pizza
+
+pie(table(carros$Type), labels = carros$Type)
+
+
+#Grafico de dispersão
+
+#o parametro pch indica o tipo de ponto que será exibido no gráfico
+plot(airquality$Wind, airquality$Temp, pch=16,
+     xlab = "Wind Velocity (MPH)",
+     ylab = "Temperature (Fahrenheit)",
+     main = "Temperatire vs Wind Velocity")
+
+
+#Temperatura dependente da velocidade do vento (nao tem diferença em relação ao gráfico da linha 160)
+plot(airquality$Temp~airquality$Wind,pch=16,
+     xlab = "Wind Velocity (MPH)",
+     ylab = "Temperature (Fahrenheit)",
+     main = "Temperature vs Wind Velocity")
+
+
+#Relação entre temperatura e mês do ano
+
+plot(airquality$Temp~airquality$Month, pch=16,
+     xlab = "Month of the year",
+     ylab = "Temperature (Fahrenheit)",
+     main = "Temperature vs Month")
+
+#Matriz de dispersão
+
+#Criação do subconjunto
+
+Ozone_Temp_Wind <- subset(airquality,
+                          select = c(Ozone,Temp,Wind))
+
+#Desenhando a matriz
+
+pairs(Ozone_Temp_Wind)
+
+#Boxplot
+
+boxplot( Temp ~ Month, data = airquality, xaxt = "n")
+
+# O terceiro arumento xaxt suprime os rótuos que pararecem do eixo x
+# (5,6,7,8 e 9 ) que represantam os meses, ao invés disso, pode-se usar
+
+axis(1, at=1:5, labels=c("Maio", "Junho","Julho", "Agosto", "Setembro"))
