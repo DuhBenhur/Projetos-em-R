@@ -196,3 +196,99 @@ boxplot( Temp ~ Month, data = airquality, xaxt = "n")
 # (5,6,7,8 e 9 ) que represantam os meses, ao invés disso, pode-se usar
 
 axis(1, at=1:5, labels=c("Maio", "Junho","Julho", "Agosto", "Setembro"))
+
+#GGPLOT2
+library(tidyverse)
+
+#base do gráfico
+ggplot(airquality, aes(x=Temp))
+
+#base do gráfico e objeto geométrico (geom)
+
+ggplot(airquality, aes(x=Temp))+
+  geom_histogram()
+
+
+#Estrutura geral ggplot
+
+#ggplot(data_source, aes(componentes de dados do mapa para componentes gráficos))+
+#geom_xxx(argumentos para modificar a aparência de geom)+
+#theme_xxx(argumentos para alterar a aparência geral)+
+#labs(adicionar rótulos do eixo e um título)
+
+#Setando a quantidade de barras
+
+#O R dá um aviso sobre a quantidade de barras inicial
+
+#`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+#Então, devemos testar qual é o volume que melhor atende para cada distribuição.
+
+ggplot(airquality, aes(x=Temp))+
+  geom_histogram(binwidth = 5)
+
+
+#Alterando as cores 
+# color = cores dos limites da barra
+# fill = cor de dentro da barra
+
+ggplot(airquality, aes(x=Temp))+
+  geom_histogram(binwidth = 5, color = "black", fill = "grey70")
+
+#mudando a cor do fundo com a função themes
+
+ggplot(airquality, aes(x=Temp))+
+  geom_histogram(binwidth = 5, color = "black", fill = "grey70")+
+  theme_bw()
+
+#Adicionando rótulo aos eixos
+
+ggplot(airquality, aes(x=Temp))+
+  geom_histogram(binwidth = 5, color = "black", fill = "grey70")+
+  theme_bw() + 
+  labs(x = "Temperature (Fahrenheit)", y = "Frequency", title = "Temperatures in the airquality Data Frame")
+
+
+#Gráfico de barras
+
+#No ggplot é um pouco mais fácil do que desenhar no R base. Não é necessario criar
+#uma tabela de frequências para desenhar o gráfico.
+
+ggplot(carros, aes(x=Type)) +
+  geom_bar(color = "grey80", fill = "blue") + 
+  labs(y = "Frequency", title = "Car Type and Frequency in Cars93")+
+  theme_minimal()
+
+
+#Gráfico de barras agrupadas
+
+ggplot(tipo_origem, aes(x=Type, fill=Origin))
+
+#aes() mapeia Type para o eixo x. O segundo argumento para aes(),
+#fill, mapeia Origin para as cores que preencherão as barras
+#Outra maneira de especificar a cor dentro da barra é adicionar aes(fill = Origin)
+#como um argumento a geom_bar()
+
+ggplot(tipo_origem, aes(x=Type,fill=Origin))+
+  geom_bar(position = "dodge", color="black")
+
+#O primeiro argumento position é análogoa beside=T
+#Nesse caso, coloca as barras lado a lado
+
+ggplot(tipo_origem, aes(x=Type,fill=Origin))+
+  geom_bar(position = "dodge", color="black") +
+  scale_fill_grey(start = 0.5, end = 1) +
+  theme_bw() + 
+  labs(x = "Tipo de carroceria", y = "Frequência",
+       title = "Carros americanos e não americanos por tipo de carroceria")
+
+females.df <- data.frame(females)
+females.df
+
+ggplot(females.df, aes(x=Hair, y = Freq, fill=Eye)) +
+  geom_bar(position="dodge", color="black", stat="identity") + 
+  scale_fill_grey(start=0, end=1)
+
+data <- LifeCycleSavings
+head(data)
+
