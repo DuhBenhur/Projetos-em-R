@@ -194,10 +194,10 @@ d.apt
 
 #Formado geral do loop for
 
-for counter in star:end{
-  statement 1
-  statement n
-}
+#for counter in star:end{
+#  statement 1
+#  statement n
+#}
 #O counter controla as iterações
 
 #O formato geral mais simples de uma instrucao if é
