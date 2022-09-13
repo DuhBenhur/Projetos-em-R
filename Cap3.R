@@ -477,3 +477,49 @@ ggplot(airquality, aes(x=as.factor(Month), y=Temp)) +
   geom_boxplot() +
   geom_point() +
   scale_x_discrete(labels=c("Maio", "Junho","Julho", "Agosto", "Setembro"))
+
+#Projeto Sugerido 3.4
+
+library(MASS)
+
+dados <- anorexia
+
+#boxplot do peso antes do tratamento
+
+ggplot(dados, aes(x=Treat, y=Prewt)) +
+  geom_boxplot() + 
+  geom_point() +
+  scale_x_discrete(labels=c("Cognitive Behavioral Therapy", "Control","Family Treatament"))+
+  labs(x = "Tratamento", y = "Peso antes do tratamento (lbs)",
+       title = "Peso dos pacientes com anorexia antes do tratamento")+
+  theme_bw()
+
+#Boxplot do peso dos pacientes depois do tratamento
+
+ggplot(dados, aes(x=Treat, y=Postwt)) +
+  geom_boxplot() +
+  geom_point() +
+  scale_x_discrete(labels =c("Cognitive Behavioral Therapy", "Control","Family Treatament"))+
+  labs(x = "Tratamento", y = "Peso depois do tratamento (lbs)",
+       title = "Peso dos pacientes com anorexia depois do tratamento") +
+  theme_bw()
+
+diff = dados$Postwt - dados$Prewt
+
+dados_diff <- cbind(dados, diff)
+
+#Diferença de peso após tratamento
+
+ggplot(dados, aes(x=Treat, y=diff)) +
+  geom_boxplot() +
+  geom_point() +
+  scale_x_discrete(labels =c("Cognitive Behavioral Therapy", "Control","Family Treatament"))+
+  labs(x = "Tratamento", y = "diferença de peso após tratamento (lbs)",
+       title = "Diferença de peso dos pacientes com anorexia depois do tratamento") +
+  theme_bw()
+
+
+anon.analysis <- lm(Postwt ~ Treat, data = dados)
+
+summary(anon.analysis)
+
