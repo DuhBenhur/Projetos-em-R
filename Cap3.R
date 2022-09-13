@@ -289,6 +289,26 @@ ggplot(females.df, aes(x=Hair, y = Freq, fill=Eye)) +
   geom_bar(position="dodge", color="black", stat="identity") + 
   scale_fill_grey(start=0, end=1)
 
+#Projeto Sugerido 3.3
+
 data <- LifeCycleSavings
 head(data)
 
+data <- rownames_to_column(data, var = "Países")
+
+data_select <- head(subset(data,
+                      select = c(Países, pop15, pop75)))
+
+#A função gather vai transformar os dados para o formato longo
+#Ao invés de ter duas colunas para porcentagens da população, 
+#terá uma coluna com a classe da população e outra coluna com a porcentagem.
+
+data_select_gather <- gather(data_select, key="pop", value = "Percent", 2:3)
+
+ggplot(data_select_gather, aes(x=Países, y=Percent, fill=pop)) + 
+  geom_bar(position="dodge", stat="identity") +
+  scale_fill_grey(start=0, end=1, labels = c("under 15", "Over 75"))
+
+#Argumento label adicionado para fazer com que a legenda apareça com under 15 
+# over 75
+ 
