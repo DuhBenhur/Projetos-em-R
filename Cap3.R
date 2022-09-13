@@ -312,3 +312,168 @@ ggplot(data_select_gather, aes(x=Países, y=Percent, fill=pop)) +
 #Argumento label adicionado para fazer com que a legenda apareça com under 15 
 # over 75
  
+
+#Gráficos de dispersão
+
+#Relação entre duas variavéis
+
+ggplot(airquality, aes(x=Wind, y=Temp)) +
+  geom_point()
+
+#Classificando cores pelo nível de Ozonio
+
+aq.no.NA <- drop_na(airquality)
+median.Ozone <- median(aq.no.NA$Ozone)
+
+#Adicionando coluna Ozone_Level
+
+#Criando Vetor
+
+Ozone_Level <- NULL
+
+
+#Preenchendo o vetor ozonio
+
+for(i in 1:nrow(aq.no.NA)){
+  if(aq.no.NA$Ozone[i]<= median.Ozone){
+    Ozone_Level[i] <- "Low"
+  }else{Ozone_Level[i] <- "High"}
+}
+
+#Cbind para adicionar o vetor na tabela
+
+aq.Ozone.Level <- cbind(aq.no.NA, Ozone_Level)
+
+head(aq.Ozone.Level)
+
+
+ggplot(aq.Ozone.Level, aes(x=Wind, y=Temp, color=Ozone_Level)) +
+  geom_point(size = 3.5) +
+  scale_color_grey(start = 0, end = 1)
+
+#Relação entre Temperatura, vento o e Ozônio
+
+aq.analysis <- lm(Temp ~ Wind + Ozone, data = aq.Ozone.Level)
+
+#Avaliando resultados
+
+summary(aq.analysis)
+#A variaveel vento não é estatisticamente significante para explicacar a variação da temperatura
+# a 95% de confiança
+
+#Scatterplot3d 
+
+library(scatterplot3d)
+
+with(aq.Ozone.Level,
+     (scatterplot3d(Wind ~ Temp + Ozone, pch = 19,color="blue")))
+
+#O comando with evita que você precise adicionar o nome do dataframe
+#junto com o sinal de $
+
+
+#Ponto fora, é possível comanda o nome da função e ver como ela foi construída
+#Dependendo do que se quer fazer, é possível alterar o código original e salva em 
+#outra variavel. 
+
+#Nesse casso não foram feitas alterações, mas segue lm do Du.
+
+regressao_do_du <- function (formula, data, subset, weights, na.action, method = "qr", 
+                             model = TRUE, x = FALSE, y = FALSE, qr = TRUE, singular.ok = TRUE, 
+                             contrasts = NULL, offset, ...) 
+{
+  ret.x <- x
+  ret.y <- y
+  cl <- match.call()
+  mf <- match.call(expand.dots = FALSE)
+  m <- match(c("formula", "data", "subset", 
+               "weights", "na.action", "offset"), 
+             names(mf), 0L)
+  mf <- mf[c(1L, m)]
+  mf$drop.unused.levels <- TRUE
+  mf[[1L]] <- quote(stats::model.frame)
+  mf <- eval(mf, parent.frame())
+  if (method == "model.frame") 
+    return(mf)
+  else if (method != "qr") 
+    warning(gettextf("method = '%s' is not supported. Using 'qr'", 
+                     method), domain = NA)
+  mt <- attr(mf, "terms")
+  y <- model.response(mf, "numeric")
+  w <- as.vector(model.weights(mf))
+  if (!is.null(w) && !is.numeric(w)) 
+    stop("'weights' must be a numeric vector")
+  offset <- model.offset(mf)
+  mlm <- is.matrix(y)
+  ny <- if (mlm) 
+    nrow(y)
+  else length(y)
+  if (!is.null(offset)) {
+    if (!mlm) 
+      offset <- as.vector(offset)
+    if (NROW(offset) != ny) 
+      stop(gettextf("number of offsets is %d, should equal %d (number of observations)", 
+                    NROW(offset), ny), domain = NA)
+  }
+  if (is.empty.model(mt)) {
+    x <- NULL
+    z <- list(coefficients = if (mlm) matrix(NA_real_, 0, 
+                                             ncol(y)) else numeric(), residuals = y, fitted.values = 0 * 
+                y, weights = w, rank = 0L, df.residual = if (!is.null(w)) sum(w != 
+                                                                                0) else ny)
+    if (!is.null(offset)) {
+      z$fitted.values <- offset
+      z$residuals <- y - offset
+    }
+  }
+  else {
+    x <- model.matrix(mt, mf, contrasts)
+    z <- if (is.null(w)) 
+      lm.fit(x, y, offset = offset, singular.ok = singular.ok, 
+             ...)
+    else lm.wfit(x, y, w, offset = offset, singular.ok = singular.ok, 
+                 ...)
+  }
+  class(z) <- c(if (mlm) "mlm", "lm")
+  z$na.action <- attr(mf, "na.action")
+  z$offset <- offset
+  z$contrasts <- attr(x, "contrasts")
+  z$xlevels <- .getXlevels(mt, mf)
+  z$call <- cl
+  z$terms <- mt
+  if (model) 
+    z$model <- mf
+  if (ret.x) 
+    z$x <- x
+  if (ret.y) 
+    z$y <- y
+  if (!qr) 
+    z$qr <- NULL
+  z
+}
+
+analise_du <- regressao_do_du(Temp ~ Wind + Ozone, data = aq.Ozone.Level)
+summary(analise_du)
+
+
+#Matriz de gráfico de dispersão
+
+aq.subset <- subset(aq.no.NA, select = c(Ozone,Wind,Temp,Solar.R))
+library(GGally) #é um pacote criado em ggplot2 e possui a visão de matriz de
+#gráficos de dispesão.
+ggpairs(aq.subset)
+
+
+#Diagrama de Caixa - Boxplot
+
+ggplot(airquality, aes(x=as.factor(Month), y=Temp))+
+  geom_boxplot() +
+  geom_point() #Para adicionar todos os pontos de dados
+
+#Para alterar os rótulos do eixo x de 5-9 para maio-setembro,pode-se
+#Usar a função scale_x_discrete()
+
+ggplot(airquality, aes(x=as.factor(Month), y=Temp)) +
+  geom_boxplot() +
+  geom_point() +
+  scale_x_discrete(labels=c("Maio", "Junho","Julho", "Agosto", "Setembro"))
