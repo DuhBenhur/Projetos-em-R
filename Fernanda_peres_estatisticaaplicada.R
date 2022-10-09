@@ -165,6 +165,11 @@ shapiro.test(dados2$DiferencaPTS1)
 
 t.test(dados2$Convulsoes_PT, dados2$Convulsoes_S1, paired = TRUE)
 
+
+#O teste-t pareado mostrou que a média de convulsões na primeira semana é diferente
+#da média de convulsões pré-tratamento (t(274) = 3,68; p < 0,001). A média de convulsões da 
+#primeira semana foi inferiro à média da semana pré-tratamento.
+
 #Visualização da distribuição dos dados
 
 par(mfrow=c(1,2))
