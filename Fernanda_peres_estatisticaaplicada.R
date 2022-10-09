@@ -103,3 +103,82 @@ Lumley, T., Diehr, P., Emerson, S., & Chen, L. (2002). The importance of the nor
 "
 )
 length(referencias)
+
+
+
+
+# Teste-T Pareado ---------------------------------------------------------
+
+pacotes <- c("dplyr","psych")
+
+if(sum(as.numeric(!pacotes %in% installed.packages())) != 0){
+  instalador <- pacotes[!pacotes %in% installed.packages()]
+  for (i in 1:length(instalador)){
+    install.packages(instalador, dependencies = T)
+    break()
+  }
+  sapply(pacotes, require, character = T)
+}else{
+  sapply(pacotes, require, character = T)
+}
+
+
+dados2 <- read.csv('Banco de Dados 4.csv', sep = ';' , dec = ',') %>% 
+  rename(Convulsoes_PT = Convulsões_PT, Convulsoes_S1 = Convulsões_S1,
+         Convulsoes_S6= Convulsões_S6, Genero = Gênero, ID_Medico = ID_Médico)
+
+View(dados2)
+glimpse(dados2)
+
+
+#Verificação da normalidade
+
+dados2$DiferencaPTS1 <- dados2$Convulsoes_PT - dados2$Convulsoes_S1
+
+#Como estamos usando um teste-t pareado o pressuposto não é que a duas variaveis tenham distribuição normal
+#Mas sim que a diferença entre as variaveis tenham distribuição normal.
+
+shapiro.test(dados2$DiferencaPTS1)
+
+#Verificação da normalidade dos dados
+#Shapiro por grupo (pacote RVAideMemoire)
+
+# O teste de Shapiro-wilk tem como h0 que a distribuição dos dados é normal
+
+#H0: distribuição dos dados = normal p > 0,05
+#H1: distribuição dos dados != normal p <= 0,05
+
+#A distribuição dos dados não são normal
+
+#3 opções caso a distribuição não seja normal
+
+# 1 - Seguir com o teste-t pareado pois muitas referências sugerem que o teste-t pareado é robusto a violações da normalidade
+#(Opção 1 não é recomendada)
+
+# 2 - Transformar os dados, trabalhar com logaritmo dos dados forçando a normalidade
+
+# 3 - Utilizar um teste não parametrico onde o pressuposto da normalidade não é necessário.
+
+
+
+#Realização do teste t pareado
+
+t.test(dados2$Convulsoes_PT, dados2$Convulsoes_S1, paired = TRUE)
+
+#Visualização da distribuição dos dados
+
+par(mfrow=c(1,2))
+boxplot(dados2$Convulsoes_PT, ylab = "Quantidade de Convulsões", xlab = "Pré-Tratamento")
+boxplot(dados2$Convulsoes_S1, ylab = "Quantidade de Convulsões", xlab = "1ª semana de Tratamento")
+
+#A escala não fica ok com mfrow
+
+#Analise descritivaa dos dados
+
+summary(dados2$Convulsoes_PT)
+summary(dados2$Convulsoes_S1)
+
+
+describe(dados2$Convulsoes_PT)
+describe(dados2$Convulsoes_S1)
+
