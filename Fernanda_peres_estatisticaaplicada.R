@@ -352,3 +352,57 @@ describeBy(dados$Pressao, group = dados$Grupo)
 #grupos
 summary(anova_Pressao)
 
+
+
+
+# Teste de Mann-Whitney ---------------------------------------------------
+
+#Fazer teste de Mann-Whitney para duas amostras independentes;
+
+#Uni e bicaudal;
+
+#Pedir a estatística descritiva dos dados.
+
+#Também conhecido como: Wilcoxon rank-sum teste
+#(Teste da soma dos postos de Wilcoxon)
+
+#Não confundir com teste de Wilcoxon para amostras pareadas
+
+#Pressupostos:
+# Variável dependente numérica ou categórica ordinal;
+#Variável independente composta por dois grupos independentes;
+
+pacotes <- c("dplyr","rstatix")
+
+if(sum(as.numeric(!pacotes %in% installed.packages())) != 0){
+  instalador <- pacotes[!pacotes %in% installed.packages()]
+  for (i in 1:length(instalador)){
+    install.packages(instalador, dependencies = T)
+    break()
+  }
+  sapply(pacotes, require, character = T)
+}else{
+  sapply(pacotes, require, character = T)
+}
+
+
+dados <- read.csv('Banco de Dados 3.csv', sep = ';' , dec = ',')
+View(dados)
+
+#Realização do teste de Mann-Whitney
+
+#H0: mediana do Grupo A = mediana do grupo B p > 0,05
+#H1: mediana do Grupo A != mdiana do Grupo B p <= 0,05
+
+wilcox.test(Nota_Biol ~ Posicao_Sala, data = dados)
+wilcox.test(Nota_Fis ~ Posicao_Sala, data = dados)
+wilcox.test(Nota_Hist ~ Posicao_Sala, data = dados)
+
+# Analise descritiva dos dados
+
+#Como não é um teste-paramétrico, não faz sentido pensar em média e desvio-padrão
+#nesse caso é mais interessante pensar na mediana e no intervalo interquartilico
+
+
+dados %>% group_by(Posicao_Sala)
+
