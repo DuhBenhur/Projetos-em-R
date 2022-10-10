@@ -404,5 +404,86 @@ wilcox.test(Nota_Hist ~ Posicao_Sala, data = dados)
 #nesse caso é mais interessante pensar na mediana e no intervalo interquartilico
 
 
-dados %>% group_by(Posicao_Sala)
+dados %>% group_by(Posicao_Sala) %>% 
+  get_summary_stats(Nota_Biol,Nota_Hist, type = "median_iqr")
+  
 
+
+#Dados paramétricos?
+
+#dados %>% group_by(Posicao_Sala) %>% 
+#  get_summary_stats(Nota_Biol,Nota_Hist, type = "mean_sd")
+
+
+par(mfrow=c(1,2))
+hist(dados$Nota_Biol[dados$Posicao_Sala == "Frente"],
+     ylab="Frequência", xlab="Nota", main="Grupo Frente")
+hist(dados$Nota_Biol[dados$Posicao_Sala == "Fundos"],
+     ylab="Frequência", xlab="Nota", main="Grupo Fundos")
+
+
+
+# Teste de Wilcoxon -------------------------------------------------------
+
+#O teste de Wilcoxon é um teste não paramétrico correspondente ao T pareado
+#Portanto ele irá comparar dois grupos que são dependentes, grupos relacionados
+
+#Teste de Wilcoxon também é conhecido por Wilcoxon signed-rank test
+#teste dos postos sinalizados de Wilcoxon
+
+
+#Pressupostos
+# Variável dependente numérica ou categórica ordinal;
+#Variável independente composta por dois grupos dependentes (pareados)
+
+
+dados <- read.csv('Banco de Dados 4.csv', sep = ';' , dec = ',') %>% 
+  rename(Convulsoes_PT = Convulsões_PT, Convulsoes_S1 = Convulsões_S1,
+         Convulsoes_S6= Convulsões_S6, Genero = Gênero, ID_Medico = ID_Médico)
+
+pacotes <- c("dplyr","rstatix")
+
+if(sum(as.numeric(!pacotes %in% installed.packages())) != 0){
+  instalador <- pacotes[!pacotes %in% installed.packages()]
+  for (i in 1:length(instalador)){
+    install.packages(instalador, dependencies = T)
+    break()
+  }
+  sapply(pacotes, require, character = T)
+}else{
+  sapply(pacotes, require, character = T)
+}
+
+
+#Realização do teste de Wilcoxon
+
+wilcox.test(dados$Convulsoes_PT, dados$Convulsoes_S1, paired = TRUE)
+
+#H0: mediana das diferenças = 0 p > 0.05
+#H1: mediana das diferenças != 0 p < 0.05
+
+# Observação:
+# O teste bicaudal é o default; caso deseje unicaudal, necessário incluir:
+# alternative = "greater" ou alternative = "less"
+# Exemplo: wilcox.test(dados$Convulsoes_PT, dados$Convulsoes_S1,
+# paired = TRUE, alternative="greater")
+# Nesse caso, o teste verificará se é a mediana das Convulsoes_PT é maior que a
+# mediana das Convulsoes_S1
+
+
+# Passo 4: Análise descritiva dos dados
+
+dados$dif <- dados$Convulsoes_PT - dados$Convulsoes_S1
+View(dados)
+
+dados %>% get_summary_stats(Convulsoes_PT, Convulsoes_S1, dif, type = "median_iqr")
+
+# Dados paramétricos?
+# dados %>% group_by(Posicao_Sala) %>% 
+#  get_summary_stats(Nota_Biol, Nota_Hist, Nota_Fis, type = "mean_sd")
+
+#Interpretação dos resultados
+
+#A quantidade de convulsões na primeira semana foi inferior à quantidade
+#de convulsões pré-tratamento. O teste de sinais de Wilcoxon mostrou que 
+#essa diferença é estatisticamente significativa (V = 14626, p < 0,001).
