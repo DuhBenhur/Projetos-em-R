@@ -487,3 +487,95 @@ dados %>% get_summary_stats(Convulsoes_PT, Convulsoes_S1, dif, type = "median_iq
 #A quantidade de convulsões na primeira semana foi inferior à quantidade
 #de convulsões pré-tratamento. O teste de sinais de Wilcoxon mostrou que 
 #essa diferença é estatisticamente significativa (V = 14626, p < 0,001).
+
+
+# Teste de Kruskal-Wallis -------------------------------------------------
+
+#Teste de Kruskal-Wallis para mais de duas amostras independentes (equivalente não paramétrico Anova 1 via)
+
+#Post-hoc adequado ao teste de Kruskal-Wallis
+
+#Pressupostos
+
+#Variável dependente numérica ou ordinal
+#Variável independente formada por grupos independentes
+pacotes <- c("dplyr","rstatix","ggplot2")
+
+if(sum(as.numeric(!pacotes %in% installed.packages())) != 0){
+  instalador <- pacotes[!pacotes %in% installed.packages()]
+  for (i in 1:length(instalador)){
+    install.packages(instalador, dependencies = T)
+    break()
+  }
+  sapply(pacotes, require, character = T)
+}else{
+  sapply(pacotes, require, character = T)
+}
+dados <- read.csv2('Banco de Dados 5.csv')
+glimpse(dados)
+
+#Teste de Kruskal-Wallis
+
+
+#As hipoteses nula e alternativa, não se referem diretamente à mediana
+#O teste e Kruskal-Wallis está considerando a distribuição dos dados
+#Assim como outros testes não paramétricos que vimos que faz o rankeamento dos valores
+# O testes de Kruskal-Wallis rankeia os valores e faz a análise estatística sob esses postos ou ranks
+#Portanto a hipotese por trás verifica se esses grupos têm distribuições diferentes.
+#Se os grupos tiverem o mesmo formato de distribuição, então estamos comparando as medianas
+#Se os grupos tiverem formatos diferentes, então estamos comparando a distribuição.
+#Para fins de simplificação, vamos considerar que as hipoteses nulas e alternativas
+#Se referem a mediana.
+
+
+#H0: média do grupo A = média do grupo B = média do grupo C -> p > 0.05
+#H1: há pelo menos uma diferença entre as médias dos grupos -> p <= 0.05
+
+kruskal.test(BC ~ Grupo, data = dados)
+kruskal.test(Pressao ~ Grupo, data = dados)
+
+# A hipotese alternativa, diz que existem diferenças entre os grupos, mas não diz qual é a diferença
+# Para descobrir qual é essa diferença, podemos fazer testes de post-hoc
+
+#Teste de Dunn com ajuste do valor de p
+
+dunn_test(BC ~ Grupo, data = dados, p.adjust.method = "bonferroni")
+dunn_test(Pressao ~ Grupo, data = dados, p.adjust.method = "bonferroni")
+
+#Análise descritiva dos dados
+
+dados %>%  group_by(Grupo) %>% 
+  get_summary_stats(BC, Pressao, type = "median_iqr")
+
+#Visualização
+
+boxplot(BC ~ Grupo, data = dados)
+boxplot(Pressao ~ Grupo, data = dados)
+
+#Batimentos cardiacos
+par(mfrow = c(1,3))
+hist(dados$BC[dados$Grupo == "Placebo"],
+    ylab = "Frequência", xlab = "bps", main = "Placebo")
+hist(dados$BC[dados$Grupo == "AH Novo"],
+     ylab = "Frequência", xlab = "bps", main = "AH Novo")
+hist(dados$BC[dados$Grupo == "AH Padrão"],
+     ylab = "Frequência", xlab = "bps", main = "AH Padrão")
+
+#Pressão
+
+par(mfrow = c(1,3))
+hist(dados$Pressao[dados$Grupo == "Placebo"],
+     ylab = "Frequência", xlab = "bps", main = "Placebo")
+hist(dados$Pressao[dados$Grupo == "AH Novo"],
+     ylab = "Frequência", xlab = "bps", main = "AH Novo")
+hist(dados$Pressao[dados$Grupo == "AH Padrão"],
+     ylab = "Frequência", xlab = "bps", main = "AH Padrão")
+
+# Histograma com todos os grupos, separados por cor
+ggplot(dados, aes(x = BC)) +
+  geom_histogram(aes(color = Grupo, fill = Grupo),
+                 alpha = 0.3, position = "identity", binwidth = 10)
+
+ggplot(dados, aes(x = Pressao)) +
+  geom_histogram(aes(color = Grupo, fill = Grupo),
+                 alpha = 0.3, position = "dodge", binwidth = 10)
