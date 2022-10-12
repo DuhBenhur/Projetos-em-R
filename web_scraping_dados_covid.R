@@ -84,3 +84,10 @@ baixar_dados_do_dia <- function(arquivo = "output/dados_convid.rar"){
 
 
 baixar_dados_do_dia()
+
+
+#Modificando função para tratar erros
+
+modificada <- purrr::safely(baixar_dados_do_dia)
+
+modificada()
