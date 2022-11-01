@@ -1,3 +1,4 @@
+#Aprendizados do livro - Cap 2
 library(datasets)
 
 library(MASS)
