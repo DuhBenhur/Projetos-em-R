@@ -1,0 +1,60 @@
+library(dplyr)
+library(tidyr)
+#O Pacote tidyr possui funções que nos ajudam a deixar uma base bagunçada
+#em uma base tidy. Ou então, nos ajudam a bagunçar um pouquinho
+# a nossa base quando isso nos ajudar a produzir os resultados
+#que queremos
+
+#Vamos ver aqui algumas de suas principais funções:
+
+#separate() e unite(): para separar variáveis concatenadas
+#em uma única coluna ou uni-las.
+
+#pivot_wider() e pivot_longer():para pivotar a base
+
+imdb <- readRDS("material do curso/materiais/data/imdb.rds")
+imdb
+
+#A função separate separa duas ou mais variaveis que estão
+#concatenadas em uma ou mais colunas
+imdb %>% 
+  select(generos)
+
+##Usando a função separate
+
+imdb %>% 
+  separate(col = generos, into = c("genero1", "genero2","genero3"),
+           sep = "\\|") %>% 
+  select(starts_with("genero"))
+
+#concatenar com unite()
+
+imdb %>% 
+  select(starts_with("ator"))
+
+#Criar coluna chamada elenco
+
+imdb %>%
+  unite(col = "elenco", starts_with("ator"), sep = " - ") %>% 
+  select(elenco)
+
+#Pivotagem de tabelas
+#pivot_longer()
+
+#Abaixo, transformamos as colunas ator1, ator2, e ator3 em
+#duas colunas: ator_atriz e protagonismo.
+
+imdb_long<-imdb %>%
+  pivot_longer( 
+    cols = starts_with("ator"),
+    names_to = "protagonismo",
+    values_to = "ator_atriz") %>% 
+  select(titulo, ator_atriz, protagonismo)
+
+imdb_long %>% 
+  pivot_wider(
+    names_from = protagonismo,
+    values_from = ator_atriz
+  ) %>% 
+  select(titulo, starts_with("ator"))
+ 
