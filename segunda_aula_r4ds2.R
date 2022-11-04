@@ -107,5 +107,16 @@ casas %>%
   )) %>% 
   select(1:5)
 
+#Combinando across() com outros operadores
+#Podemos combinar testes lógicos com seleções de colunas. Calculamos as áreas médias,
+#garantindo que pegamos apenas variáveis numéricas.
 
+#Pegando apenas 4 colunas por questão de espaço.
+
+casas %>% 
+  summarise(across(
+    .cols = where(is.numeric) & contains("_area"),
+    .fns = mean, na.rm = TRUE
+    )) %>% 
+  select(1:4)
 
