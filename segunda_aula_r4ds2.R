@@ -80,3 +80,32 @@ casas %>%
     .fns = mean, na.rm = TRUE #Função
   ))
  
+#O R não deixa criar uma coluna que começa com ponto
+#Pode existir uma colunas chamada cols, mas para evitar conflito, o R 
+# tem o argumento começando com "." sendo assim .cols
+
+
+#Usando across(), podemos facilmente aplicar uma função em todas as colunas da nossa
+#base. O argumento padrão de .cols é everything()
+
+#Por questão de espaço, vamos pegar apenas 5 colunas
+
+casas %>% 
+  summarise(across(.fns = n_distinct)) %>% 
+  select(1:5)
+
+
+#Se quisermos selecionar as colunas a serem modificadasa partir de um teste lógico,
+#utilizamos o ajudante where(). No exemplo abaixo, calculamos o múmero de valores
+#distintos das colunas de categóricas.
+
+#pegando apenas 5 colunas por questão de espaço
+casas %>% 
+  summarise(across(
+    .cols = where(is.character), #variaveis
+    .fns = n_distinct # função
+  )) %>% 
+  select(1:5)
+
+
+
