@@ -57,4 +57,26 @@ imdb_long %>%
     values_from = ator_atriz
   ) %>% 
   select(titulo, starts_with("ator"))
+
+
+casas <- dados::casas
+
+#A ideia da função across() é facilitar a aplicação de uma operação a diversas colunas
+# da base.
+
+casas %>% 
+  group_by(geral_qualidade) %>% 
+  summarise(
+    lote_area_media = mean(lote_area, na.rm = TRUE),
+    venda_valor_medio = mean(venda_valor, na.rm = TRUE)
+  )
+
+#Com a função across, a sintaxe é simplificada
+
+casas %>% 
+  group_by(geral_qualidade) %>% 
+  summarise(across(
+    .cols = c(lote_area, venda_valor), #Variáveis
+    .fns = mean, na.rm = TRUE #Função
+  ))
  
