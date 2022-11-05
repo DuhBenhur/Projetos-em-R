@@ -107,6 +107,10 @@ casas %>%
   )) %>% 
   select(1:5)
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 80f98d6e575a1939a7548e8d51514630c8f15c92
 #Combinando across() com outros operadores
 #Podemos combinar testes lógicos com seleções de colunas. Calculamos as áreas médias,
 #garantindo que pegamos apenas variáveis numéricas.
@@ -119,4 +123,61 @@ casas %>%
     .fns = mean, na.rm = TRUE
     )) %>% 
   select(1:4)
+<<<<<<< HEAD
 
+=======
+ 
+
+?dplyr::starts_with
+
+
+#Fazer várias aplicações do across() também é possível:
+
+casas %>% 
+  group_by(fundacao_tipo) %>% 
+  summarise(
+    across(contains("area"), mean, na.rm = TRUE),
+    across(where(is.character), ~ sum(is.na(.x))), #Conta o número de NA nas colunas do tipo caracter
+    n_obs = n()
+  ) %>% 
+  select(1:2,19:20,n_obs)
+  
+# A última funcionalidade relevante do across() é a capacidade de receber uma lista
+#de funções
+
+casas %>% 
+  group_by(rua_tipo) %>% 
+  summarise(across(
+    .cols = c(lote_area, venda_valor),
+    .fns = list("média" = mean, "mediana" = median)
+  ))
+
+#O argumento .names define uma fórmula para a construção do nome das novas colunas:
+
+casas %>% 
+  group_by(rua_tipo) %>% 
+  summarise(across(
+    .cols = c(lote_area, venda_valor),
+    .fns = list("media" = mean, "mediana" = median),
+    .names = "{.fn}_de_{.col}" #{nome da função} _de_ {nome da coluna}
+  ))
+
+
+#across() outros verbos
+
+#O across() pode ser utilizado em todos os verbos do dplyr (com exceção do select() e rename())
+#já que ele não traz vantagens com relação ao que já podia ser feito) e isso unifica o modo que 
+#trabalhamos essas operações no dplyr
+
+#Vamos ver um exemplo para o mutate() e para o filter()
+
+
+#O código abaixo transforma todas as variáveis que possuem area no nome,
+#passando os valores de pés quadrados para metros quadrados
+
+casas %>% 
+  mutate(across(
+    contains("area"),
+    ~.x/10.764
+  ))
+>>>>>>> 80f98d6e575a1939a7548e8d51514630c8f15c92

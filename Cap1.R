@@ -1,3 +1,4 @@
+#Aprendizados do livro - Cap 1
 #Vetor
 x <- c(5,10,15,20,25,30,35,40)
 

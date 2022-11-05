@@ -579,3 +579,5 @@ ggplot(dados, aes(x = BC)) +
 ggplot(dados, aes(x = Pressao)) +
   geom_histogram(aes(color = Grupo, fill = Grupo),
                  alpha = 0.3, position = "dodge", binwidth = 10)
+
+#Continuando
