@@ -107,10 +107,6 @@ casas %>%
   )) %>% 
   select(1:5)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 80f98d6e575a1939a7548e8d51514630c8f15c92
 #Combinando across() com outros operadores
 #Podemos combinar testes lógicos com seleções de colunas. Calculamos as áreas médias,
 #garantindo que pegamos apenas variáveis numéricas.
@@ -121,12 +117,8 @@ casas %>%
   summarise(across(
     .cols = where(is.numeric) & contains("_area"),
     .fns = mean, na.rm = TRUE
-    )) %>% 
+  )) %>% 
   select(1:4)
-<<<<<<< HEAD
-
-=======
- 
 
 ?dplyr::starts_with
 
@@ -141,7 +133,7 @@ casas %>%
     n_obs = n()
   ) %>% 
   select(1:2,19:20,n_obs)
-  
+
 # A última funcionalidade relevante do across() é a capacidade de receber uma lista
 #de funções
 
@@ -178,6 +170,12 @@ casas %>%
 casas %>% 
   mutate(across(
     contains("area"),
-    ~.x/10.764
+    ~.x/10.764))
+
+#O código a seguir filra apenas as casas que possuem varanda aberta, cerca e lareira
+
+casas %>% 
+  filter(across(
+         c(varanda_aberta_area, cerca_qualidade, lareira_qualidade),
+         ~!is.na(.x)
   ))
->>>>>>> 80f98d6e575a1939a7548e8d51514630c8f15c92
