@@ -248,3 +248,35 @@ dados_starwars %>%
   arrange(desc(num_cat))
 
 
+#Motivação: Descobrir o ator com maior lucro médio na base IMDB,
+#considerando as 3 colunas de elenco
+imdb <- readRDS("E:/R/Curo R - R para Ciencia de Dados II/Projetos-em-R/material do curso/materiais/data/imdb.rds")
+
+
+glimpse(imdb)
+
+
+imdb %>% 
+  mutate(lucro = receita - orcamento) %>% 
+  select(titulo,lucro, starts_with("ator")) %>% 
+  pivot_longer(starts_with("ator"), names_to = "protagonismo", values_to = "ator") %>% 
+  group_by(ator) %>% 
+  summarise(lucro_medio = mean(lucro, na.rm = TRUE),
+            n_filmes = n())%>%
+  filter(n_filmes > 5) %>% 
+  arrange(desc(lucro_medio))
+
+#Motivação: Fazer uma tabela do lucro médio anual dos filmes
+#de comédia, ação e romance (2000 a 2016)
+
+imdb %>% 
+  mutate(lucro = receita - orcamento) %>% 
+  select(titulo,ano, generos, lucro) %>% 
+  separate_rows(generos, sep = "\\|") %>% 
+  filter(generos %in% c("Commedy", "Action", "Romance")) %>% 
+  filter(between(ano, 2000, 2016)) %>% 
+  group_by(ano, generos) %>% 
+  summarise(media_lucro = mean(lucro, na.rm = TRUE)) %>% 
+    arrange(desc(media_lucro))
+
+names(imdb)
