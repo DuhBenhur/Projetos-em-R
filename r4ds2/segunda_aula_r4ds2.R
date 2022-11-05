@@ -220,7 +220,31 @@ dados_starwars %>%
 #Em cada variável categórica
 
 
+dados_starwars %>% 
+  summarise(across(
+    where(is.character),
+    n_distinct
+  ))
+
+#Pivotando e ordenando pelo número de categorias
 
 
+
+dados_starwars %>%
+  summarise(across(where(is.character),
+                   n_distinct)) %>% 
+  pivot_longer(everything(), names_to = "coluna", values_to = "num_cat") %>% 
+  arrange(desc(num_cat)) %>% View()
+
+
+#Remover nome (é a chave da base)
+
+dados_starwars %>% 
+  summarise(across(
+    .cols = c(where(is.character), -nome),
+    .fns = n_distinct
+  )) %>% 
+  pivot_longer(everything(), names_to = "coluna", values_to = "num_cat") %>% 
+  arrange(desc(num_cat))
 
 
