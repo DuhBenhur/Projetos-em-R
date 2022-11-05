@@ -1,5 +1,6 @@
 library(dplyr)
 library(tidyr)
+library(dados)
 #O Pacote tidyr possui funções que nos ajudam a deixar uma base bagunçada
 #em uma base tidy. Ou então, nos ajudam a bagunçar um pouquinho
 # a nossa base quando isso nos ajudar a produzir os resultados
@@ -179,3 +180,47 @@ casas %>%
          c(varanda_aberta_area, cerca_qualidade, lareira_qualidade),
          ~!is.na(.x)
   ))
+
+#Motivação: explorar algumas funções do tidyr para lidar com 
+#NAs
+
+#drop_na()
+
+dados_starwars %>%  View()
+
+dados_starwars %>% 
+  drop_na() %>% 
+  View()
+
+
+#Motivação: substituir todos os NAs das variáveis por "Sem informação"
+
+dados_starwars %>% 
+  mutate(
+    across(
+      where(is.character),
+      tidyr::replace_na,
+      replace = "sem informação"
+    )
+  ) %>% View()
+
+glimpse(dados_starwars)
+
+
+#Deixando no formato longo e contando NAs por coluna
+
+dados_starwars %>% 
+  summarise(across(.fns = ~sum(is.na(.x)))) %>% 
+  pivot_longer(everything(), names_to = "coluna",
+               values_to = "num_na") %>% 
+  arrange(desc(num_na)) %>% View()
+  
+
+#Motivação: Ver o número de categorias distintas
+#Em cada variável categórica
+
+
+
+
+
+
