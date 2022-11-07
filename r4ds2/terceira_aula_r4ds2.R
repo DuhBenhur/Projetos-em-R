@@ -86,6 +86,33 @@ frutas <- c("banana", "TANGERINA", "maçã", "lima")
 
 str_detect(frutas, pattern = "na")
 
-#Exemplo qualquer caractere ^ (início da string) e $(fim da string)
+#Exemplo . (qualquer caractere), ^ (início da string) e $(fim da string)
 
 str_detect(frutas, pattern = "^ma")
+
+
+#Podemos contar as ocorrências de um padrão: + (1 ou mais vezes), *(0 ou mais vezes),
+#{m,n} (entre m e n vezes).? (0 ou 1 vez)
+
+
+ois <- c("oi","oii","oiii!","oioioi!")
+
+str_extract(ois, pattern = "i+")
+
+#[] é um conjunto e () é um conjunto "inquebrável
+
+str_extract(ois, pattern = "[i!]$")#i ou exclamação no final da string
+
+
+str_extract(ois, pattern = "(oi)+")#o seguido de i 
+
+# Se de fato precisarmos encontrar um dos caracteres reservados descritos 
+#anteriormente, precisamos escapá-los da mesma forma como vimos antes
+
+str_replace("Bom dia.", pattern = ".", replacement = "!")
+
+str_replace("Bom dia.", pattern = "\\.", replacement = "!")
+
+#Não esquecer que algumas funções do {stringr} possuem variações
+
+str_replace_all("Bom. Dia.", pattern = "\\.", replacement = "!")
