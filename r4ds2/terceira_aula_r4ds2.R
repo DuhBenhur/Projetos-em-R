@@ -214,5 +214,17 @@ emails |>
   mutate(
     telefone = str_extract(texto, regex_telefone),
     email = str_extract(texto, regex_email),
-    cep = str_extract(texto, regex_email)
+    cep = str_extract(texto, regex_cep)
+  )|> View()
+
+#Cep pegou o telefone para o caso em que o CEP tem o mesmo formato, e agora?
+
+regex_cep <- "[0-9]{5}-[0-9]{3}([^0-9]|$)" # o circunflexo dentro do colchete é a negação daquele colchete
+#Qualquer coisa que não seja de 0-9
+
+emails |>
+  mutate(
+    telefone = str_extract(texto, regex_telefone),
+    email = str_extract(texto, regex_email),
+    cep = str_extract(texto, regex_cep)
   )|> View()
