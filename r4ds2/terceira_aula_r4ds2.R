@@ -116,3 +116,103 @@ str_replace("Bom dia.", pattern = "\\.", replacement = "!")
 #Não esquecer que algumas funções do {stringr} possuem variações
 
 str_replace_all("Bom. Dia.", pattern = "\\.", replacement = "!")
+
+#Exemplos de extract e remove
+
+str_extract("Esse texto é importante! O meu número é 1234","(1234)")
+str_remove("Esse texto é impotante! O meu número é 1234","(1234)")
+
+#Resultados em funções diferentes
+
+str_detect("Esse texto é impotante! O meu número é 1234","ando")#Retorna FALSE sem encontrar o padrão
+str_extract("Esse texto é importante! O meu número é 1234","ando")#Retorna NA sem encontrar o padrão
+str_remove("Esse texto é impotante! O meu número é 1234","ando")#Retorna o texto sem encontrar o padrão
+
+
+# Exemplos com str_subset
+
+str_subset(c("banana", "TANGERINA", "maçã", "lima"), "NA") #Maiúscula
+
+str_subset(c("banana", "TANGERINA", "maçã", "lima"), "^ma")#Início
+str_subset(c("banana", "TANGERINA", "maçã", "lima"),"ma$")# Final
+str_subset(c("banana", "TANGERINA", "maçã", "lima"),".m")# Qualquer (algo antes do m)
+
+
+str_extract(c("oii","oiii!","oiii!!!","oioioi!"),"i+!") # 1 ou mais
+str_extract(c("oii","oiii!","oiii!!!","oioioi!"),"i+!?") # 0 ou 1
+str_extract(c("oii","oiii!","oiii!!!","oioioi!"),"i+!*") # o ou mais
+str_extract(c("oii","oiii!","oiii!!!","oioioi!"),"i{1,2}") # Entre m e n
+
+str_extract(c("oii","oiii!","oiii!!!","oioioi!"), "[i!]+")# i(s) ou exclamações [] é ou
+str_subset(c("banana", "TANGERINA", "maçã", "lima"),"[a-z]")# Conjuntos (minusculas)
+str_extract(c("oii","oiii!","oiii!!!","oioioi!"), "(oi)+") #Tudo
+str_extract(c("oii","oiii!","ola!!!","oioioi!"), "(i+|!+)") # Ou
+
+
+#Escapando
+
+str_replace("Bom dia.", "\\.","!") #Escapando
+str_replace("Bom. Dia.", "\\.", "!") # Primeira ocorrência
+str_replace_all("Bom. Dia.","\\.","!") #_all trata todas ocorrências
+str_remove_all("Bom \"dia\"","\\\"") #Escapando o escape
+
+
+#Dica geral para extrair vários acentos
+
+stringi::stri_trans_general("Váríôs àçêntõs", "Latin-ASCII")#Remover acentos
+
+str_extract_all("Número: (11) 91234-1234", "[0-9]+") #Números
+
+
+str_extract("Número: (11) 91234-1234", "[A-Za-z]+") #Pega só o N pq o ú tem acento, é reconhecido como um 
+#simbolo diferente
+
+str_extract("Número: (11) 91234-1234", "[:alpha:]+") #Nesse caso pega a palavra com acento
+
+#Colinha do stringr
+
+#https://raw.githubusercontent.com/rstudio/cheatsheets/master/strings.pdf
+
+
+
+#Tenho uma lista de emails
+library(tidyverse)
+texto = c("meu e-mail é fulano@bol.com.br, meu telefone é: (11) 96563-3243 e meu cep é 07642-126",
+          "Bom dia!! \n E-mail: ciclana@gmail.com \n Contato: 5322-1234 \n CEP: 05544-147",
+          "o telefone é +78(32) 6783-5234, cep: 35687-999, email: contato_56@bla.br. VALEU",
+          "Meu.nome@hotmail.com, 943421516, 54869-147")
+
+emails <- tibble(texto)
+
+regex_cep <- "[0-9]{5}-[0-9]{3}"
+
+str_detect("07642-126",regex_cep)
+
+str_extract("07642-126", regex_cep)
+
+regex_email <- "[a-zA-Z0-9_\\.]{1,100}@[a-z]{1,20}(.com)?(.br)?"
+
+str_extract(texto, regex_email)
+
+regex_telefone <- "(\\+[0-9]{2})?(\\([0-9]{2}\\) )?[0-9]{4,5}-?[0-9]{4,5}"
+
+
+
+str_extract(texto, regex_telefone)
+
+
+# duvida: se os textos viessem com "cep" antes, teria um jeito mais facil?
+
+ceps <- c("kajsduibqefbef  iuuhuwhuheuhs cep 05798-927 obg,  hauhauhsuhuhe huahauha cep 00000-111")
+
+ceps |> str_extract("cep .+")|>
+  str_remove("cep ")|>
+  str_extract("[0-9-]+")
+
+
+emails |>
+  mutate(
+    telefone = str_extract(texto, regex_telefone),
+    email = str_extract(texto, regex_email),
+    cep = str_extract(texto, regex_email)
+  )|> View()
