@@ -221,6 +221,7 @@ emails |>
 
 regex_cep <- "[0-9]{5}-[0-9]{3}([^0-9]|$)" # o circunflexo dentro do colchete é a negação daquele colchete
 #Qualquer coisa que não seja de 0-9
+# Em geral está renornado no final ou um não número ou o final da string, por causa do $
 
 emails |>
   mutate(
@@ -228,3 +229,13 @@ emails |>
     email = str_extract(texto, regex_email),
     cep = str_extract(texto, regex_cep)
   )|> View()
+
+
+#Duvida: se os textos viessem com "cep" antes, teria um jeito mais fácil?
+
+ceps <- c("husahuhedufdhsuhfcudhfdew uhuheuhruehwj cep 05798-927 obg",
+          "uahushuhweuioq cep 01325-000")
+
+ceps |> str_extract("cep .+")|>
+  str_remove("cep ") |>
+  str_extract("[0-9-]+")
