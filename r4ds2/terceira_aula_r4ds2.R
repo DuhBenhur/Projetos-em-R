@@ -276,3 +276,28 @@ imdb |>
   select(titulo, subtitulo) |> 
   filter(! is.na(subtitulo)) |> 
   View()
+
+# Motivação: criar uma tabela apenas com filmes culo
+# título comece com um número
+
+imdb |> 
+  filter(str_detect(titulo, "^[0-9]")) |> 
+  select(titulo) |> 
+  head()
+
+
+# Motivação: criar uma tabela apenas com filmes em que o Nicolas Cage faz parte
+# do elenco
+
+imdb |> 
+  filter(str_detect(elenco, "Nicolas Cage")) |> 
+  select(titulo, elenco) |>
+  View()
+
+#Criar uma flag para o filtro
+
+imdb |>
+  mutate(
+    flag_nicolas = str_detect(elenco, "Nicolas Cage")
+  ) |> filter(flag_nicolas == T) |> 
+  select(titulo,elenco, flag_nicolas) |> View()
