@@ -239,3 +239,5 @@ ceps <- c("husahuhedufdhsuhfcudhfdew uhuheuhruehwj cep 05798-927 obg",
 ceps |> str_extract("cep .+")|>
   str_remove("cep ") |>
   str_extract("[0-9-]+")
+
+
