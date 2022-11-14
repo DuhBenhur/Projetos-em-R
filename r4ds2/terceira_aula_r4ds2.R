@@ -240,4 +240,30 @@ ceps |> str_extract("cep .+")|>
   str_remove("cep ") |>
   str_extract("[0-9-]+")
 
+# e se a pessoa desse 1 ou mais numeros de telefone?
 
+texto2 <-"meu e-mail é fulano@bol.com.br, meu telefone é: (11) 96563-3243, meu outro telefone é (11) 98871-5523 e meu cep é 07642-126"
+
+#Retorna só a primeira ocorrência
+str_extract(texto2, regex_telefone)
+
+#Retorna todas ocorrencias
+str_extract_all(texto2, regex_telefone)
+
+
+#Base IMDB
+
+imdb <- read_csv("https://raw.githubusercontent.com/curso-r/main-r4ds-1/master/dados/imdb.csv")
+View(imdb)
+#Motivação: descobrir a quantos gêneros cada filme pertence
+
+?str_count
+
+imdb |> 
+  mutate(
+    num_generos = str_count(generos, ',') + 1
+  )|>
+  select(generos, num_generos) |> 
+  head()
+
+#Motivação: extrair os subtítulos dos filmes
