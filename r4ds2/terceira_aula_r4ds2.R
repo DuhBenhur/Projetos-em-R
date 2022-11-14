@@ -267,3 +267,12 @@ imdb |>
   head()
 
 #Motivação: extrair os subtítulos dos filmes
+
+imdb |> 
+  mutate(
+    subtitulo = str_extract(titulo, ": .+") |> 
+      str_remove(": ")
+  ) |> 
+  select(titulo, subtitulo) |> 
+  filter(! is.na(subtitulo)) |> 
+  View()
