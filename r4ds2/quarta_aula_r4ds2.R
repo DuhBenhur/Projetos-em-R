@@ -174,4 +174,198 @@ add_months(x, 1) #Erro argumento inválido
 #em dias no outro mês
 add_months(x,1,invalid = "overflow")
 
+#FORCATS
 
+#MOTIVAÇAO
+# 
+# No R, um dos tipos de dados mais importantes é o fator
+# Mas qual é a razão por trás da existência dos fatores?
+# Não seria melhor tudo ser string como em outras linguagens?
+#   
+# A resposta simples é: não. Fatores são a forma do R lidar com variáveis
+# categóricas (ordenadas ou não) e eles podem facilitar muito a vida, tanto
+# na modelagem quanto na vissualização dos dados. Hoje em dia é menos comum
+# ter variáveis  categóricas em uma base do que variávveis textuais, 
+# mas isso não quer dizer que fatores não sejam uma ferramenta incrível.
+# 
+# Para nos ajudar a trablhar com fatores, temo o pacote {forcats}
+# (for cateforrical variables). As suas pricipais funções
+# servem para alterar a ordem e modificar os níves de um fator
+
+
+#Introdução
+
+#Por padrão, quando criamos um fator manualmente, a função
+# as_factor() recebe strings que denotam as categorias.
+# As ategorias são guardadas na ordem em que aparecem
+# (o que é diferente do {base})
+
+library(forcats)
+
+x <- as_factor(c("baixo", "medio", "baixo", "alto", NA))
+x
+#Formalmente, um fator não passa de um 
+#vetor numérico com níveis (levels):
+#os nomes de cada categoria
+
+typeof(x)
+
+
+#Vantagens
+# 
+# 
+# Como já aludido, os fatores sã úteis na modelagem estatística:no ANOVA, por exemplo, é útil
+# e adequado interpretar um vertor de textos como um vetor de textos como um vetor de
+# números inteiros
+# 
+# Fatores também ocupam significativamente menos espaços em memória do que string
+# (quando seu uso for apropriado) já que são armazenados como inteiros,
+# mas podem ser trabalhados como strings
+
+x[x != "medio"]
+# 
+# 
+# Mais interessante ainda é trabalhar com fatores ordenados, que
+# facilitam a criação de gráficos porque permiem ordenar
+# variáveis não - alfabeticamente
+
+#Comparações com textos ordenados, por exemplos os meses do ano
+#reconhecidos de forma ordenada de Janeiro a Dezembro em 12 fatores
+lubridate::month(Sys.Date(), label = TRUE, abbr = FALSE)
+
+#Remover níveis sem representante
+fct_drop(x[x != "medio"])
+
+# Re-rotular os níveis com uma função
+fct_relabel(x, stringr::str_to_upper)
+
+#Concatenar fatores
+
+fct_c(x, as_factor(c("altíssimo", "perigoso")))
+
+#Re-nívelar fator (trazer níveis para frente) uso raro
+
+(x2 <- fct_relevel(x, "alto", "medio"))
+
+#Transformar a ordem dos elementos no ordemanento do fator
+
+fct_inorder(x2, ordered = TRUE)
+
+#Transformar a ordem dos níveis no ordenamento do fator
+
+as.ordered(x2)
+
+# Transformar NA em um fator explícito
+
+fct_explicit_na(x, na_level = "(vazio)")
+
+#juntar fatores com poucas ocorrências
+fct_lump_min(x, min = 2, other_level = "outros")
+
+#Inverter a ordem dos níveis
+
+fct_rev(x)
+
+#Usar um vetor para reordenar (útil no mutate())
+
+fct_reorder(x, c(2,1,3,10,0), .fun = max)
+
+#Alterar manualmente os níveis
+lvls_revalue(x, c("P", "M","G"))
+
+#Alterar manualmente a ordem dos níveis
+lvls_reorder(x, c(3,2,1))
+
+starwars |> 
+  group_by(sex) |> 
+  summarise(n = n()) |> 
+  ggplot(aes(sex, n))+
+  geom_col()
+  theme_minimal()
+  
+#Um simples gráfico de barras já é ótimo
+#para demonstrar o poder do {forcats}
+  
+#Note que, ao lado, as barras estão ordenadas
+#Pela ordem alfabética do sexo
+  
+#Caso de uso
+  
+starwars |> 
+  mutate(
+    sex = as_factor(sex)
+  ) |> 
+  group_by(sex) |> 
+  summarise(n = n()) |> 
+  ggplot(aes(sex, n))+
+  geom_col()+
+  theme_classic()
+
+#Transformano a coluna em fator, agora as
+#barras ficam ordenadas pela precedência na coluna
+
+
+starwars |> 
+  mutate(
+    sex = as_factor(sex),
+    sex = fct_relabel(sex,stringr::str_to_title))|>  
+  group_by(sex) |> 
+  summarise(n = n()) |> 
+  ggplot(aes(sex, n))+
+  geom_col()+
+  theme_classic()
+
+#transformando com relabel o nome das colunas
+
+
+
+starwars |> 
+  mutate(
+    sex = as_factor(sex),
+    sex = fct_relabel(sex,stringr::str_to_title),
+    sex = fct_explicit_na(sex, "?")
+  ) |> 
+  group_by(sex) |> 
+  summarise(n = n()) |> 
+  ggplot(aes(sex, n))+
+  geom_col()+
+  theme_classic()
+#Fazer com que o NA se torne um fator
+#também é simples com fct_explicit_na()
+
+
+starwars |> 
+  mutate(
+    sex = as_factor(sex),
+    sex = fct_relabel(sex,stringr::str_to_title),
+    sex = fct_explicit_na(sex, "?"),
+    sex = fct_lump_n(sex, 2)
+  ) |> 
+  group_by(sex) |> 
+  summarise(n = n()) |> 
+  ggplot(aes(sex, n))+
+  geom_col()+
+  theme_classic()
+
+#Se não quisermos todos os níveis, podemos
+#agupar os menos frequentes com a familia de funções
+#fcl_lump_***()
+
+
+starwars |> 
+  mutate(
+    sex = as_factor(sex),
+    sex = fct_relabel(sex,stringr::str_to_title),
+    sex = fct_explicit_na(sex, "?"),
+    sex = fct_lump_n(sex, 2)
+  ) |> 
+  group_by(sex) |> 
+  summarise(n = n()) |> 
+  mutate(sex = fct_reorder(sex, n)) |> 
+  ggplot(aes(sex, n))+
+  geom_col()+
+  theme_classic()
+
+#Para ordenar as barras de acordo com outra
+#variável, podemos simplesmente usar
+# fct_reorder() (trocando o argumento .fun quando necessario)
