@@ -1,0 +1,83 @@
+---
+title: "Analisando FII"
+author: "Eduardo Ben-Hur"
+date: "2023-03-02"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Carrega as bibliotecas necessárias
+library(flexdashboard)
+library(rvest)
+library(tidyverse)
+library(DT)
+
+# Define a URL da página a ser lida
+page <- "https://fundamentus.com.br/fii_resultado.php"
+
+# Lê o conteúdo HTML da página e converte a tabela encontrada em um objeto data frame
+fii <- read_html(page) %>% 
+  html_table()
+
+# Seleciona apenas a primeira tabela encontrada (que contém as informações de interesse)
+# e seleciona apenas algumas colunas específicas
+fii <- fii[[1]] %>% 
+  select(
+    Papel, Segmento, Cotação, 'Dividend Yield', 'P/VP',
+    'Valor de Mercado', Liquidez, 'Vacância Média'
+  ) %>% 
+  
+  # Faz a limpeza dos dados das colunas Cotação a Vacância Média
+  # Substitui o caractere "." e "%" por vazio, transforma "," em "." e converte o tipo para numérico
+  mutate(
+    across(Cotação:'Vacância Média', gsub, pattern = "\\.|%", replacement = ""),
+    across(Cotação:'Vacância Média', gsub, pattern = ",", replacement = "."),
+    across(Cotação:'Vacância Média', as.numeric),
+  )
+
+```
+
+Column {.sidebar}
+-----------------------------------------------------
+
+```{r echo=FALSE}
+numericInput(
+  "cotacao", label = "VALOR DA COTA ATÉ:",
+  value = 150
+)
+
+numericInput(
+  "dividend_yeld", label = "DIVIDEND YIELD MAIOR QUE:",
+  value = 4
+)
+
+sliderInput(
+  "p_pv", label = "P/PV entre:",
+  min = 0, max = 2, step = 0.1,
+  value = c(0.4, 1.2)
+)
+
+sliderInput(
+  "valor_mercado", label = "VALOR DE MERCADO MAIOR QUE",
+  min = 0, max = 1000000000, step = 500000000,
+  value = 500000000, pre = "R$"
+)
+
+sliderInput(
+  "liquidez", label = "LIQUIDEZ MAIOR QUE",
+  min = 0, max = 2000000, step = 500000,
+  value = 1000000, pre = "R$"
+)
+
+sliderInput(
+  "vacancia", label = "VACÂNCIA MÉDIA MENOR QUE:",
+  min = 0, max = 30, step = 5,
+  value = 30, pre = "%"
+)
+```
+
