@@ -39,7 +39,14 @@ fii <- fii[[1]] %>%
     across(Cotação:'Vacância Média', gsub, pattern = "\\.|%", replacement = ""),
     across(Cotação:'Vacância Média', gsub, pattern = ",", replacement = "."),
     across(Cotação:'Vacância Média', as.numeric),
+  )  %>%
+  
+  # Formata as colunas "Valor de Mercado" e "Liquidez" como valores monetários (R$)
+  mutate(
+    `Valor de Mercado` = paste0("R$", format(round(`Valor de Mercado`, 2), nsmall = 2, big.mark = ".") ),
+    Liquidez = paste0("R$", format(round(Liquidez, 2), nsmall = 2, big.mark = "."))
   )
+ 
   
   
   
