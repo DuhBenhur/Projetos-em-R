@@ -73,7 +73,7 @@ leveneTest(Nota_Hist ~ Posicao_Sala, dados, center = mean) #variancia dos grupos
 #Two Sample t-test
 
 #H0: média do grupo A = média do grupo B p > 0.05
-#H1: média do grupo A = média do grupo B p > 0.05
+#H1: média do grupo A != média do grupo B p < 0.05
 
 t.test(Nota_Biol ~ Posicao_Sala, dados, var.equal = TRUE) #Teste t para variancias homogeneas
 t.test(Nota_Fis ~ Posicao_Sala, dados, var.equal = FALSE) #Teste t para variancias não homogeneas
